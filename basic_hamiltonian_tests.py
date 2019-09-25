@@ -5,7 +5,7 @@ Basic tests for hamiltonian cycle.
 '''
 
 # Todos:
-# 1. Test for sum of two non-adjacent vertices.
+# 1. Update trivial hamiltonian test.
 
 # Install matplotlib
 try:
@@ -29,6 +29,23 @@ def min_degree(G):
 # Returns number of disjoint components in graph G:
 def k_components(G):
   return len(nx.k_components(G))
+
+# Returns minimum sum of degrees of non-adjacent nodes:
+def min_degree_sum_non_adjacent_nodes(G):
+  # Degree of any vertex of simple graph is atmost (n-1),
+  # where n is number of nodes:
+  min_sum = 2 * len(G.nodes)
+  for node1 in G.nodes:
+    for node2 in G.nodes:
+      # Avoiding redundant computation:
+      if node1 >= node2:
+        continue
+      # if non-adjacent nodes:
+      if (not G.has_edge(node1,node2)):
+        if min_sum > G.degree[node1] + G.degree[node2]:
+          min_sum = G.degree[node1] + G.degree[node2]
+  assert min_sum < (2 * len(G.nodes)), "min_sum is not updated."
+  return min_sum
 
 # Returns true is graph G is trivially non-hamiltonian:
 def is_trivial_non_hamiltonian(G):
