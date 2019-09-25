@@ -7,6 +7,11 @@
 # 2. Update comments.
 # 3. Update encoding suitable for networkx graphs nodes numbering.
 
+
+'''
+Input format: graph G (Adjacency representation of graph as a dictionary of dictionaries)
+'''
+
 import sys
 
 # Reads from file and returns adjacency list:
