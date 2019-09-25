@@ -6,7 +6,6 @@ Basic tests for hamiltonian cycle.
 
 # Todos:
 # 1. Add appropriate asserts for correctness.
-# 2. Add hamiltonian test through DFS using networkx library.
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -52,6 +51,7 @@ def is_trivial_non_hamiltonian(G):
     return True
   return False
 
+# Returns true is graph G is trivially hamiltonian:
 def is_trivial_hamiltonian(G):
   # A simple graph with minimum degree atleast n/2 is hamiltonian:
   if min_degree(G) >= len(G.nodes):
