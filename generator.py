@@ -6,10 +6,8 @@ For finding non-hamiltonian "hard-graphs", random graphs and special graphs are 
 '''
 
 # Todos:
-# 1. Generate simple graphs with set number of nodes and edges.
-# 2. Update the options to include special graphs.
-# 3. Add option to write the graph to files.
-# 4. Specify input and output for this module.
+# 1. Update the options to include special graphs.
+# 2. Add option to write the graph to files.
 
 # Install matplotlib
 try:
