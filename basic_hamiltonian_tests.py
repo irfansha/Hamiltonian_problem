@@ -60,3 +60,18 @@ def is_trivial_hamiltonian(G):
   if min_degree_sum_non_adjacent_nodes(G) >= len(G.nodes):
     return True
   return False
+
+# Returns true if graph G is hamiltonian:
+# Using all_simple_paths function in networkx,
+# Very slow, use only for assertion:
+def is_hamiltonian_slow(G):
+  nodes = list(G.nodes)
+  # Consider first node as source:
+  s_node = nodes[0]
+  adj_nodes = list(G.neighbors(s_node))
+  for adj_node in adj_nodes:
+    for path in nx.all_simple_paths(G, source = s_node, target = adj_node):
+      if (len(path) == len(nodes)):
+        print(path)
+        return True
+  return False
