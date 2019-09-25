@@ -47,7 +47,7 @@ def is_trivial_non_hamiltonian(G):
   if min_degree(G) < 2:
     return True
   # Hamiltonian graph must be connected:
-  if is_connected(G) > 1:
+  if not is_connected(G):
     return True
   return False
 
@@ -69,9 +69,11 @@ def is_hamiltonian_slow(G):
   # Consider first node as source:
   s_node = nodes[0]
   adj_nodes = list(G.neighbors(s_node))
+  if len(adj_nodes) == 0:
+    return False
+  assert(len(adj_nodes) != 0)
   for adj_node in adj_nodes:
     for path in nx.all_simple_paths(G, source = s_node, target = adj_node):
       if (len(path) == len(nodes)):
-        print(path)
         return True
   return False
