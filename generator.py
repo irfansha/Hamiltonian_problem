@@ -23,7 +23,15 @@ try:
 except:
     raise
 
-# Draws nothing
-G = nx.Graph()
-nx.draw(G)
-plt.show()
+# Takes long time:
+def visualise_all_atlas_graphs():
+  all_small_graphs = nx.atlas.graph_atlas_g()
+  for G in all_small_graphs:
+    nx.draw(G)
+    plt.show(block=False)
+    plt.pause(0.5)
+    plt.close()
+
+# Returns list of atlas graphs
+def all_atlas_graphs():
+  return nx.atlas.graph_atlas_g()
