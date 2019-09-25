@@ -13,15 +13,15 @@ For finding non-hamiltonian "hard-graphs", random graphs and special graphs are 
 
 # Install matplotlib
 try:
-    import matplotlib.pyplot as plt
+  import matplotlib.pyplot as plt
 except:
-    raise
+  raise
 
 # Install networkx
 try:
-    import networkx as nx
+  import networkx as nx
 except:
-    raise
+  raise
 
 # Takes long time:
 def visualise_all_atlas_graphs():
@@ -35,3 +35,13 @@ def visualise_all_atlas_graphs():
 # Returns list of atlas graphs
 def all_atlas_graphs():
   return nx.atlas.graph_atlas_g()
+
+# Returns a G_(n,p) random graph or Erods-Renyi/binomial graph,
+# With n nodes, p edge probability and seed for random number generation:
+def binomial_random_graph_gen(n, p, seed):
+  return fast_gnp_random_graph(n, p, seed)
+
+# Returns a G_(n,m) random graph,
+# With n nodes, m edges and seed for random number generation:
+def random_graph_gen(n, p, seed):
+  return fast_gnp_random_graph(n, p, seed)
