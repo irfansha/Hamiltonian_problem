@@ -6,18 +6,10 @@ Basic tests for hamiltonian cycle.
 
 # Todos:
 # 1. Add appropriate asserts for correctness.
+# 2. Add hamiltonian test through DFS using networkx library.
 
-# Install matplotlib
-try:
-  import matplotlib.pyplot as plt
-except:
-  raise
-
-# Install networkx
-try:
-  import networkx as nx
-except:
-  raise
+import matplotlib.pyplot as plt
+import networkx as nx
 
 # Returns minimum degree of graph G:
 def min_degree(G):
