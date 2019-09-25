@@ -3,86 +3,68 @@
 # Naive encoding for Hamiltonian path
 
 # Todos:
-# 1. Update input details.
-# 2. Update comments.
-# 3. Update encoding suitable for networkx graphs nodes numbering.
+# 1. Update comments.
 
 
 '''
-Input format: graph G (Adjacency representation of graph as a dictionary of dictionaries)
+Input format: graph G (Same format as networkx)
 '''
 
 import sys
+import networkx as nx
 
-# Reads from file and returns adjacency list:
-def f_read(path):
-    f = open(path, "r")
-    f1 = f.readlines()
-    temp_list = []
-    global N,E
-    N = int(f1.pop(0).strip())
-    E = int(f1.pop(0).strip())
-    for line in f1:
-        line = line.strip().split()
-        temp_list.append(line)
-    return temp_list
+# Relabeling nodes for direct encoding:
+# Starting from 1 to N where N is number of nodes:
+def relabel(G):
+  new_labels = dict()
+  nodes = list(G.nodes)
+  for i in range(1, len(nodes)+1):
+    new_labels[nodes[i-1]] = i
+  return nx.relabel_nodes(G,new_labels)
+
+# To dictionary of dictionaries:
+def to_adj_dict(G):
+  return nx.convert.to_dict_of_lists(G)
 
 # AtMostOne constraints for every pair of variables:
 def AMO(var):
-    for i in range(0, len(var)):
-        for j in range(i + 1, len(var)):
-            cnf_output.append([-var[i], -var[j], 0])
+  for i in range(0, len(var)):
+    for j in range(i + 1, len(var)):
+      cnf_output.append([-var[i], -var[j], 0])
 
 # AtLeastOne constraint for the set of variables:
 def ALO(var):
-    var.append(0)
-    cnf_output.append(var)
-
-# Constraints for adjacent nodes of different levels for path:
-def edg_con_path(lst):
-    inv = int(lst.pop(0))
-    for i in range(1,N):
-        temp_clause = [-var_map(i, inv)]
-        for outv in lst:
-            temp_clause.append(var_map(i+1,int(outv)))
-        temp_clause.append(0)
-        cnf_output.append(temp_clause)
+  var.append(0)
+  cnf_output.append(var)
 
 # Constraints for adjacent nodes of different levels for cycle:
-def edg_con_cycle(lst):
-    inv = int(lst.pop(0))
-    for i in range(1,N):
-        temp_clause = [-var_map(i, inv)]
-        for outv in lst:
-            temp_clause.append(var_map(i+1,int(outv)))
-        temp_clause.append(0)
-        cnf_output.append(temp_clause)
-    # Additional edge to complete the cycle:
-    temp_clause = [-var_map(N, inv)]
-    temp_clause.extend(lst)
+def edg_con_cycle(node,neighbours):
+  for i in range(1,N):
+    temp_clause = [-var_map(i, node)]
+    for neighbour in neighbours:
+      temp_clause.append(var_map(i+1,int(neighbour)))
     temp_clause.append(0)
     cnf_output.append(temp_clause)
+  # Additional edge to complete the cycle:
+  temp_clause = [-var_map(N, node)]
+  temp_clause.extend(neighbours)
+  temp_clause.append(0)
+  cnf_output.append(temp_clause)
 
 # Mapping variables with level i and node j to single integer:
 def var_map(i, j):
-    return ((i - 1) * N + j)
+  return ((i - 1) * N + j)
 
 # Joining variables in each constraint for cnf format:
 def convert(lst):
-    s = [str(i) for i in lst]
-    return ' '.join(s)
+  s = [str(i) for i in lst]
+  return ' '.join(s)
 
 # print the constraints in dimacs/qdimacs based on the option provided:
-def print_cnf(opt):
-    print("p cnf " + str(N * N) + " " + str(len(cnf_output)))
-    if (opt == "q"):
-        st = "e "
-        for i in range(1, N*N+1):
-          st += str(i) + " "
-        st += "0"
-        print(st)
-    for line in cnf_output:
-        print(convert(line))
+def print_cnf():
+  print("p cnf " + str(N * N) + " " + str(len(cnf_output)))
+  for line in cnf_output:
+    print(convert(line))
 
 # Number of nodes
 N = 0
@@ -92,56 +74,42 @@ E = 0
 cnf_output = []
 
 
-def main(argv):
-    if (len(sys.argv) != 4):
-        print("Use command: python naive_encoding.py [path-to-input-graph] [p/c] [s/q]")
-        print("p: Hamiltonian path and c for Hamiltonian cycle")
-        print("s: for SAT encoding and q for QBF encoding")
-    else:
-        path = sys.argv[1]
-        # Option for path or cycle:
-        path_cycle_opt = sys.argv[2]
-        # Encoding option:
-        encd_opt = sys.argv[3]
-        # Read adjacency list from file:
-        adj_list = f_read(path)
+def encoding(G):
+  global N
+  N = len(G.nodes)
+  global E
+  E = G.size()
+  G = relabel(G)
+  adj_dict = to_adj_dict(G)
+  # Exactly one node each turn:
+  for i in range(1, N + 1):
+    # AtMostOne constraints for each level:
+    temp_var = []
+    for j in range(1, N + 1):
+      temp_var.append(var_map(i, j))
+    AMO(temp_var)
 
-        # Exactly one node each turn:
-        for i in range(1, N + 1):
-            # AtMostOne constraints for each level:
-            temp_var = []
-            for j in range(1, N + 1):
-                temp_var.append(var_map(i, j))
-            AMO(temp_var)
+  for i in range(1, N + 1):
+    # AtLeastOne constraints for each level:
+    temp_var = []
+    for j in range(1, N + 1):
+      temp_var.append(var_map(i, j))
+    ALO(temp_var)
 
-        for i in range(1, N + 1):
-            # AtLeastOne constraints for each level:
-            temp_var = []
-            for j in range(1, N + 1):
-                temp_var.append(var_map(i, j))
-            ALO(temp_var)
+  # Visit every vertex only once:
+  for j in range(1, N + 1):
+    temp_var = []
+    for i in range(1, N + 1):
+      temp_var.append(var_map(i, j))
+    AMO(temp_var)
 
-        # Visit every vertex only once:
-        for j in range(1, N + 1):
-            temp_var = []
-            for i in range(1, N + 1):
-                temp_var.append(var_map(i, j))
-            AMO(temp_var)
+  for j in range(1, N + 1):
+    temp_var = []
+    for i in range(1, N + 1):
+      temp_var.append(var_map(i, j))
+    ALO(temp_var)
 
-        for j in range(1, N + 1):
-            temp_var = []
-            for i in range(1, N + 1):
-                temp_var.append(var_map(i, j))
-            ALO(temp_var)
-
-        # Edge constraints:
-        for ver in adj_list:
-            if (path_cycle_opt == 'p'):
-                edg_con_path(ver)
-            else:
-                edg_con_cycle(ver)
-        print_cnf(encd_opt)
-
-
-if __name__ == "__main__":
-    main(sys.argv[1:])
+  # Edge constraints:
+  for node, neighbours in adj_dict.iteritems():
+    edg_con_cycle(node, neighbours)
+  print_cnf()
