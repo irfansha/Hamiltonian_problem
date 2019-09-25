@@ -5,7 +5,7 @@ Basic tests for hamiltonian cycle.
 '''
 
 # Todos:
-# 1. Update trivial hamiltonian test.
+# 1. Add appropriate asserts for correctness.
 
 # Install matplotlib
 try:
