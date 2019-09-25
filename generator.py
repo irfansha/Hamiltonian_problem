@@ -37,9 +37,11 @@ def all_atlas_graphs():
 # Returns a G_(n,p) random graph or Erods-Renyi/binomial graph,
 # With n nodes, p edge probability and seed for random number generation:
 def binomial_random_graph_gen(n, p, seed):
-  return fast_gnp_random_graph(n, p, seed)
+  assert p <= 1, "Probability should be less than 1."
+  return nx.generators.random_graphs.fast_gnp_random_graph(n, p, seed)
 
 # Returns a G_(n,m) random graph,
 # With n nodes, m edges and seed for random number generation:
-def random_graph_gen(n, p, seed):
-  return fast_gnp_random_graph(n, p, seed)
+def random_graph_gen(n, m, seed):
+  assert m <= n*(n-1), "Too many edges."
+  return nx.generators.random_graphs.gnm_random_graph(n, m, seed)
