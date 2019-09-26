@@ -4,6 +4,9 @@
 Generating non-trivial non-hamiltonian graphs.
 '''
 
+# Todos:
+# 1. Update the slow hamiltonian test to SAT solving test.
+
 import generator as gn
 import basic_hamiltonian_tests as bh_test
 import matplotlib.pyplot as plt
