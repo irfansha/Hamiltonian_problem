@@ -11,6 +11,21 @@ print(ntnh_random_binomial_graphs(20,0.3,0,1000)):
 prints [[20, 0.3, 24], [20, 0.3, 494], [20, 0.3, 923], [20, 0.3, 957]]
 
 These are non-trivial non-hamiltonian graphs.
+Almost takes 3 minutes though.
+'''
+
+'''
+Analysis:
+1. ntnh_random_binomial_graphs(20,0.3,0,1000)
+  [[20, 0.3, 24], [20, 0.3, 494], [20, 0.3, 923], [20, 0.3, 957]]
+  real	2m39,758s
+  user	2m35,402s
+  sys	0m5,079s
+2. ntnh_random_binomial_graphs(20,0.5,0,100000)
+  []
+  real	50m0,004s
+  user	40m32,106s
+  sys	9m23,457s
 '''
 
 # Todos:
@@ -19,7 +34,6 @@ These are non-trivial non-hamiltonian graphs.
 
 import generator as gn
 import basic_hamiltonian_tests as bh_test
-import matplotlib.pyplot as plt
 import networkx as nx
 import SAT_hamiltonian_test as s_test
 
