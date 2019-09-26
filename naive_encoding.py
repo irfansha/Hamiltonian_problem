@@ -112,6 +112,6 @@ def encoding(G, file_name):
       temp_var.append(var_map(i, j))
     ALO(temp_var,cnf_output)
   # Edge constraints:
-  for node, neighbours in adj_dict.iteritems():
+  for node, neighbours in adj_dict.items():
     edg_con_cycle(node, neighbours,cnf_output)
   print_cnf(file_name,cnf_output)
