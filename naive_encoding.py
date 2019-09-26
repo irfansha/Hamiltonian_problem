@@ -27,18 +27,20 @@ def to_adj_dict(G):
   return nx.convert.to_dict_of_lists(G)
 
 # AtMostOne constraints for every pair of variables:
-def AMO(var):
+def AMO(var,cnf_output):
   for i in range(0, len(var)):
     for j in range(i + 1, len(var)):
       cnf_output.append([-var[i], -var[j], 0])
+  return cnf_output
 
 # AtLeastOne constraint for the set of variables:
-def ALO(var):
+def ALO(var,cnf_output):
   var.append(0)
   cnf_output.append(var)
+  return cnf_output
 
 # Constraints for adjacent nodes of different levels for cycle:
-def edg_con_cycle(node,neighbours):
+def edg_con_cycle(node,neighbours,cnf_output):
   for i in range(1,N):
     temp_clause = [-var_map(i, node)]
     for neighbour in neighbours:
@@ -50,6 +52,7 @@ def edg_con_cycle(node,neighbours):
   temp_clause.extend(neighbours)
   temp_clause.append(0)
   cnf_output.append(temp_clause)
+  return cnf_output
 
 # Mapping variables with level i and node j to single integer:
 def var_map(i, j):
@@ -61,25 +64,25 @@ def convert(lst):
   return ' '.join(s)
 
 # print the constraints in dimacs/qdimacs based on the option provided:
-def print_cnf():
-  print("p cnf " + str(N * N) + " " + str(len(cnf_output)))
+def print_cnf(file_name,cnf_output):
+  f = open(file_name,"w+")
+  f.write("p cnf " + str(N * N) + " " + str(len(cnf_output)) + "\n")
   for line in cnf_output:
-    print(convert(line))
+    f.write(convert(line)+ "\n")
 
 # Number of nodes
 N = 0
 # Number of edges
 E = 0
-# List for final cnf output:
-cnf_output = []
 
 
-def encoding(G):
+def encoding(G, file_name):
   global N
   N = len(G.nodes)
   global E
   E = G.size()
   G = relabel(G)
+  cnf_output = []
   adj_dict = to_adj_dict(G)
   # Exactly one node each turn:
   for i in range(1, N + 1):
@@ -87,29 +90,28 @@ def encoding(G):
     temp_var = []
     for j in range(1, N + 1):
       temp_var.append(var_map(i, j))
-    AMO(temp_var)
+    AMO(temp_var,cnf_output)
 
   for i in range(1, N + 1):
     # AtLeastOne constraints for each level:
     temp_var = []
     for j in range(1, N + 1):
       temp_var.append(var_map(i, j))
-    ALO(temp_var)
+    ALO(temp_var,cnf_output)
 
   # Visit every vertex only once:
   for j in range(1, N + 1):
     temp_var = []
     for i in range(1, N + 1):
       temp_var.append(var_map(i, j))
-    AMO(temp_var)
+    AMO(temp_var,cnf_output)
 
   for j in range(1, N + 1):
     temp_var = []
     for i in range(1, N + 1):
       temp_var.append(var_map(i, j))
-    ALO(temp_var)
-
+    ALO(temp_var,cnf_output)
   # Edge constraints:
   for node, neighbours in adj_dict.iteritems():
-    edg_con_cycle(node, neighbours)
-  print_cnf()
+    edg_con_cycle(node, neighbours,cnf_output)
+  print_cnf(file_name,cnf_output)
