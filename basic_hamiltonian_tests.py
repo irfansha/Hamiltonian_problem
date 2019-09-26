@@ -7,7 +7,6 @@ Basic tests for hamiltonian cycle.
 # Todos:
 # 1. Add appropriate asserts for correctness.
 
-import matplotlib.pyplot as plt
 import networkx as nx
 
 # Returns minimum degree of graph G:
