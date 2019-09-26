@@ -5,7 +5,10 @@ Basic tests for hamiltonian cycle.
 '''
 
 # Todos:
-# 1. Add appropriate asserts for correctness.
+# 1. Add cutset test.
+#    - In a simple connected graph, if a cutset of size two results in atleast 3 disjoint sets
+#      then it is non-hamiltonian.
+# 2. Add appropriate asserts for correctness.
 
 import networkx as nx
 
