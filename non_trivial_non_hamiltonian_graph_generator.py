@@ -26,7 +26,15 @@ Analysis:
   real	50m0,004s
   user	40m32,106s
   sys	9m23,457s
+3. ntnh_random_binomial_graphs(20,0.55,0,100000)
+[]
+
+real	41m35,822s
+user	35m38,525s
+sys	6m6,374s
+
 '''
+
 
 # Todos:
 # 1. Add assertions for correctness.
