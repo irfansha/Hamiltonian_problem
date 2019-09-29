@@ -5,7 +5,7 @@ Toughness for undirected graphs.
 '''
 
 # Todos:
-# 1. Use bounding to improve toughness computation.
+# 1. Improve computation using naive_degree_heuristic_toughness.
 # 2. Improve computation using properties of graphs.
 # 3. Use SAT/QBF for efficient computation.
 
@@ -28,6 +28,22 @@ def local_toughness(cut_set,G):
 def degree_heuristic_toughness(G):
   return 0
 
+# Return toughness of graph G if the toughness is greater than bound
+# else returns a string saying "not tough enough":
+def bounded_toughness(G,bound):
+  nodes = G.nodes()
+  min_toughness = math.inf
+  min_cut_set = []
+  for cut_size in range(1, len(nodes)):
+    cut_set_gen = combinations(nodes,cut_size)
+    for cut_set in cut_set_gen:
+      if min_toughness < bound:
+        return "Not tough enough"
+      l_toughness = local_toughness(cut_set,G.copy())
+      if l_toughness < min_toughness:
+        min_toughness = l_toughness
+        min_cut_set = cut_set
+  return (min_toughness,min_cut_set)
 
 # Returns the toughness and cut_set of the graph G:
 def naive_toughness(G):
