@@ -24,4 +24,15 @@ def bounded_experiment(lst,bound):
   for g_seed in lst:
     G = gn.binomial_random_graph_gen(g_seed[0],g_seed[1],g_seed[2])
     G_toughness = t.bounded_toughness(G,bound)
-    print(G_toughness)
+    if (G_toughness[0] < bound):
+      print("Not tough enough with atmost:")
+      print(G_toughness)
+
+# Prints toughness of each graph provided with bounded-toughness degree-heuristic computation:
+def bounded_degree_heuristic_experiment(lst,bound):
+  for g_seed in lst:
+    G = gn.binomial_random_graph_gen(g_seed[0],g_seed[1],g_seed[2])
+    G_toughness = t.degree_heuristic_toughness(G,bound)
+    if (G_toughness[0] < bound):
+      print("Not tough enough with atmost:")
+      print(G_toughness)

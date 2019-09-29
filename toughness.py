@@ -25,8 +25,23 @@ def local_toughness(cut_set,G):
 
 # Returns toughness of graph G:
 #   - sorts the cut_sets using the total degree of the nodes in descending order.
-def degree_heuristic_toughness(G):
-  return 0
+def degree_heuristic_toughness(G,bound):
+  sorted_list = sorted(G.degree, key=lambda x: x[1], reverse=True)
+  sorted_nodes = []
+  for item in sorted_list:
+    sorted_nodes.append(item[0])
+  min_toughness = math.inf
+  min_cut_set = []
+  for cut_size in range(1, len(sorted_nodes)):
+    cut_set_gen = combinations(sorted_nodes,cut_size)
+    for cut_set in cut_set_gen:
+      if min_toughness < bound:
+        return (min_toughness,min_cut_set)
+      l_toughness = local_toughness(cut_set,G.copy())
+      if l_toughness < min_toughness:
+        min_toughness = l_toughness
+        min_cut_set = cut_set
+  return (min_toughness,min_cut_set)
 
 # Return toughness of graph G if the toughness is greater than bound
 # else returns a string saying "not tough enough":
@@ -38,7 +53,7 @@ def bounded_toughness(G,bound):
     cut_set_gen = combinations(nodes,cut_size)
     for cut_set in cut_set_gen:
       if min_toughness < bound:
-        return "Not tough enough"
+        return (min_toughness,min_cut_set)
       l_toughness = local_toughness(cut_set,G.copy())
       if l_toughness < min_toughness:
         min_toughness = l_toughness
